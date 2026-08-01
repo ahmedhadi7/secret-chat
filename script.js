@@ -1,13 +1,11 @@
 import {
-  addDoc,
-  collection,
-  db,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  doc,
-  getDoc
+    collection,
+    db,
+    doc,
+    getDoc,
+    onSnapshot,
+    orderBy,
+    query
 } from "./firebase.js";
 
 console.log("script loaded");
@@ -19,6 +17,14 @@ console.log("script loaded");
 const urlParams = new URLSearchParams(window.location.search);
 
 const roomId = urlParams.get("room");
+if(!roomId){
+
+    alert("رابط المحادثة غير صحيح");
+
+    throw new Error("Room ID is missing");
+
+}
+
 
 
 
