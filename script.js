@@ -1,15 +1,14 @@
 import {
-    getFirestore,
     collection,
-    addDoc,
-    query,
-    orderBy,
-    onSnapshot,
-    serverTimestamp,
+    db,
     doc,
-    getDoc
-} from 
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    getDoc,
+    onSnapshot,
+    orderBy,
+    query,
+    addDoc,
+    serverTimestamp
+} from "./firebase.js";
 
 
 console.log("script loaded");
