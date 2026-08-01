@@ -5,7 +5,9 @@ import {
   onSnapshot,
   orderBy,
   query,
-  serverTimestamp
+  serverTimestamp,
+  doc,
+  getDoc
 } from "./firebase.js";
 
 console.log("script loaded");
@@ -46,9 +48,8 @@ const errorMessage = document.getElementById("errorMessage");
 
 
 
-// كلمة المرور
 
-const CHAT_PASSWORD = "2580";
+
 
 
 
@@ -62,27 +63,12 @@ let username = "";
 
 // الدخول
 
-loginBtn.onclick = () => {
+loginBtn.onclick = async () => {
 
 
-    console.log("button clicked");
+    const name = usernameInput.value.trim();
 
-const name = usernameInput.value.trim();
-
-const password = passwordInput.value.trim();
-
-console.log(name, password);
-
-
-
-    if(password !== CHAT_PASSWORD){
-
-        errorMessage.innerHTML =
-        "❌ كلمة المرور غير صحيحة";
-
-        return;
-
-    }
+    const password = passwordInput.value.trim();
 
 
 
@@ -90,6 +76,47 @@ console.log(name, password);
 
         errorMessage.innerHTML =
         "اكتب اسمك";
+
+        return;
+
+    }
+
+
+
+    const roomRef = doc(
+        db,
+        "rooms",
+        roomId
+    );
+
+
+
+    const roomSnap = await getDoc(roomRef);
+
+
+
+    if(!roomSnap.exists()){
+
+        errorMessage.innerHTML =
+        "❌ المحادثة غير موجودة";
+
+        return;
+
+    }
+
+
+
+    const correctPassword =
+    roomSnap.data().password;
+
+
+
+    if(password !== correctPassword){
+
+
+        errorMessage.innerHTML =
+        "❌ رمز الدخول غير صحيح";
+
 
         return;
 
@@ -113,70 +140,8 @@ console.log(name, password);
     chatBox.classList.remove("hidden");
 
 
-
     loadMessages();
 
-
-};
-
-
-
-
-// تحميل الاسم المحفوظ
-
-const savedName = localStorage.getItem(
-    "secret_username"
-);
-
-
-if(savedName){
-
-    usernameInput.value = savedName;
-
-}
-
-
-
-
-// إرسال رسالة
-
-sendBtn.onclick = async () => {
-
-
-    const text =
-    messageInput.value.trim();
-
-
-
-    if(text === "")
-    return;
-
-
-
-    await addDoc(
-
-        collection(
-            db,
-            "rooms",
-            roomId,
-            "messages"
-        ),
-
-        {
-
-            sender: username,
-
-            text: text,
-
-            time: serverTimestamp()
-
-        }
-
-    );
-
-
-
-    messageInput.value = "";
 
 };
 

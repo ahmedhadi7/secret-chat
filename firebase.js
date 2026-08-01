@@ -1,24 +1,19 @@
-// Firebase App
-import { initializeApp } from 
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 
-// Firestore
-import { 
-    getFirestore,
-    collection,
+import {
     addDoc,
-    query,
-    orderBy,
+    collection,
+    doc,
+    getDoc,
+    getFirestore,
     onSnapshot,
+    orderBy,
+    query,
     serverTimestamp
-} 
-from 
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
-
-// بيانات Firebase الخاصة بك
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -33,28 +28,14 @@ const firebaseConfig = {
 
 
 
-// تشغيل Firebase
-
 const app = initializeApp(firebaseConfig);
 
-
-// قاعدة البيانات
 
 const db = getFirestore(app);
 
 
 
 export {
-
-    db,
-
-    collection,
-    addDoc,
-
-    query,
-    orderBy,
-    onSnapshot,
-
-    serverTimestamp
-
+    addDoc, collection, db, doc,
+    getDoc, onSnapshot, orderBy, query, serverTimestamp
 };
