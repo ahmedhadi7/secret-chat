@@ -1,14 +1,15 @@
 import {
+    getFirestore,
     collection,
-    db,
-    doc,
-    getDoc,
-    onSnapshot,
-    orderBy,
-    query,
     addDoc,
-    serverTimestamp
-} from "./firebase.js";
+    query,
+    orderBy,
+    onSnapshot,
+    serverTimestamp,
+    doc,
+    getDoc
+} from 
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
 console.log("script loaded");
@@ -305,6 +306,12 @@ sendBtn.onclick = async () => {
 
 
     try {
+
+        console.log("sending:", {
+    roomId,
+    username,
+    text
+});
 
 
 
