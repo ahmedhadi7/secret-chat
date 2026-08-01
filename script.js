@@ -5,11 +5,13 @@ import {
     getDoc,
     onSnapshot,
     orderBy,
-    query
+    query,
+    addDoc,
+    serverTimestamp
 } from "./firebase.js";
 
-console.log("script loaded");
 
+console.log("script loaded");
 
 
 // قراءة الغرفة من الرابط
@@ -17,6 +19,8 @@ console.log("script loaded");
 const urlParams = new URLSearchParams(window.location.search);
 
 const roomId = urlParams.get("room");
+
+
 if(!roomId){
 
     alert("رابط المحادثة غير صحيح");
@@ -24,7 +28,6 @@ if(!roomId){
     throw new Error("Room ID is missing");
 
 }
-
 
 
 
@@ -54,11 +57,6 @@ const errorMessage = document.getElementById("errorMessage");
 
 
 
-
-
-
-
-
 // المستخدم
 
 let username = "";
@@ -66,8 +64,7 @@ let username = "";
 
 
 
-
-// الدخول
+// تسجيل الدخول
 
 loginBtn.onclick = async () => {
 
@@ -89,64 +86,81 @@ loginBtn.onclick = async () => {
 
 
 
-    const roomRef = doc(
-        db,
-        "rooms",
-        roomId
-    );
+    try {
+
+
+        const roomRef = doc(
+            db,
+            "rooms",
+            roomId
+        );
+
+
+        const roomSnap = await getDoc(roomRef);
 
 
 
-    const roomSnap = await getDoc(roomRef);
+        if(!roomSnap.exists()){
+
+            errorMessage.innerHTML =
+            "❌ المحادثة غير موجودة";
+
+            return;
+
+        }
 
 
 
-    if(!roomSnap.exists()){
+        const correctPassword =
+        roomSnap.data().password;
+
+
+
+        if(password !== correctPassword){
+
+
+            errorMessage.innerHTML =
+            "❌ رمز الدخول غير صحيح";
+
+
+            return;
+
+        }
+
+
+
+        username = name;
+
+
+
+        localStorage.setItem(
+            "secret_username",
+            username
+        );
+
+
+
+        loginBox.classList.add("hidden");
+
+        chatBox.classList.remove("hidden");
+
+
+
+        loadMessages();
+
+
+
+    } catch(error){
+
+
+        console.error(error);
+
 
         errorMessage.innerHTML =
-        "❌ المحادثة غير موجودة";
+        "حدث خطأ في الاتصال";
 
-        return;
 
     }
-
-
-
-    const correctPassword =
-    roomSnap.data().password;
-
-
-
-    if(password !== correctPassword){
-
-
-        errorMessage.innerHTML =
-        "❌ رمز الدخول غير صحيح";
-
-
-        return;
-
-    }
-
-
-
-    username = name;
-
-
-
-    localStorage.setItem(
-        "secret_username",
-        username
-    );
-
-
-
-    loginBox.classList.add("hidden");
-
-    chatBox.classList.remove("hidden");
-
-
-    loadMessages();
 
 
 };
@@ -156,159 +170,201 @@ loginBtn.onclick = async () => {
 
 
 
-// استقبال الرسائل
+// تحميل الرسائل
 
 function loadMessages(){
 
 
-const messagesQuery = query(
 
-    collection(
-        db,
-        "rooms",
-        roomId,
-        "messages"
-    ),
+    const messagesQuery = query(
 
-    orderBy(
-        "time",
-        "asc"
-    )
-
-);
+        collection(
+            db,
+            "rooms",
+            roomId,
+            "messages"
+        ),
 
 
+        orderBy(
+            "time",
+            "asc"
+        )
 
-onSnapshot(
-
-messagesQuery,
-
-(snapshot)=>{
-
-
-messagesBox.innerHTML = "";
+    );
 
 
 
-snapshot.forEach((doc)=>{
 
 
-const data = doc.data();
+    onSnapshot(
+
+        messagesQuery,
 
 
-
-const div =
-document.createElement("div");
+        (snapshot)=>{
 
 
-
-div.className =
-"message " +
-
-(data.sender === username
-?
-"my-message"
-:
-"other-message");
+            messagesBox.innerHTML = "";
 
 
 
-div.innerHTML = `
-
-<div class="message-name">
-
-${data.sender}
-
-</div>
+            snapshot.forEach((doc)=>{
 
 
-${data.text}
-
-`;
+                const data = doc.data();
 
 
 
-messagesBox.appendChild(div);
+                const div =
+                document.createElement("div");
 
 
 
-});
+                div.className =
+                "message " +
+
+                (
+                    data.sender === username
+
+                    ?
+
+                    "my-message"
+
+                    :
+
+                    "other-message"
+
+                );
 
 
 
-messagesBox.scrollTop =
-messagesBox.scrollHeight;
+                div.innerHTML = `
+
+                    <div class="message-name">
+
+                    ${data.sender}
+
+                    </div>
+
+
+                    <div>
+
+                    ${data.text}
+
+                    </div>
+
+                `;
+
+
+
+                messagesBox.appendChild(div);
+
+
+
+            });
+
+
+
+            messagesBox.scrollTop =
+            messagesBox.scrollHeight;
+
+
+
+        }
+
+    );
 
 
 
 }
 
-);
 
 
 
-}
+
+
+
+// إرسال رسالة
+
 sendBtn.onclick = async () => {
 
 
-    console.log("send clicked");
 
-    console.log("room:", roomId);
-
-    console.log("user:", username);
+    const text =
+    messageInput.value.trim();
 
 
 
-    const text = messageInput.value.trim();
+    if(text === ""){
 
+        return;
 
-
-    if(text === "")
-    return;
+    }
 
 
 
     try {
 
 
+
         await addDoc(
 
+
             collection(
+
                 db,
+
                 "rooms",
+
                 roomId,
+
                 "messages"
+
             ),
+
+
 
             {
 
+
                 sender: username,
+
 
                 text: text,
 
+
                 time: serverTimestamp()
+
 
             }
 
+
+
         );
 
-
-        console.log("message sent");
 
 
         messageInput.value = "";
 
 
-    } catch(error) {
+
+        console.log("Message sent");
+
+
+
+    } catch(error){
+
 
 
         console.error(
-            "send error:",
+            "Send error:",
             error
         );
 
 
     }
+
 
 
 };

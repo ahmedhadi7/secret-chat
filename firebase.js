@@ -36,6 +36,19 @@ const db = getFirestore(app);
 
 
 export {
-    addDoc, collection, db, doc,
-    getDoc, onSnapshot, orderBy, query, serverTimestamp
+
+    db,
+
+    collection,
+    addDoc,
+
+    query,
+    orderBy,
+    onSnapshot,
+
+    serverTimestamp,
+
+    doc,
+    getDoc
+
 };
