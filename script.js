@@ -248,3 +248,67 @@ messagesBox.scrollHeight;
 
 
 }
+sendBtn.onclick = async () => {
+
+
+    console.log("send clicked");
+
+    console.log("room:", roomId);
+
+    console.log("user:", username);
+
+
+
+    const text = messageInput.value.trim();
+
+
+
+    if(text === "")
+    return;
+
+
+
+    try {
+
+
+        await addDoc(
+
+            collection(
+                db,
+                "rooms",
+                roomId,
+                "messages"
+            ),
+
+            {
+
+                sender: username,
+
+                text: text,
+
+                time: serverTimestamp()
+
+            }
+
+        );
+
+
+        console.log("message sent");
+
+
+        messageInput.value = "";
+
+
+    } catch(error) {
+
+
+        console.error(
+            "send error:",
+            error
+        );
+
+
+    }
+
+
+};
