@@ -1,16 +1,14 @@
 import {
-
-    db,
-    collection,
     addDoc,
+    collection,
+    db,
     doc,
     getDoc,
-    updateDoc,
     onSnapshot,
     orderBy,
     query,
-    serverTimestamp
-
+    serverTimestamp,
+    updateDoc
 } from "./firebase.js";
 
 
@@ -266,6 +264,8 @@ for(const messageDoc of snapshot.docs){
         data.read === false
 
     ){
+
+        console.log("mark as read", messageDoc.id);
 
 
         await updateDoc(
