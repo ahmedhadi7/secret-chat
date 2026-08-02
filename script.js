@@ -63,16 +63,7 @@ document.getElementById("loginBtn");
 
 const errorMessage =
 document.getElementById("errorMessage");
-messageInput.addEventListener(
-"input",
-()=>{
 
-    messageInput.style.height="auto";
-
-    messageInput.style.height =
-    messageInput.scrollHeight + "px";
-
-});
 const savedUser =
 localStorage.getItem("secret_username");
 
@@ -94,6 +85,20 @@ document.getElementById("messageInput");
 const sendBtn =
 document.getElementById("sendBtn");
 
+
+
+// تكبير حقل الرسالة تلقائياً
+
+messageInput.addEventListener(
+"input",
+()=>{
+
+    messageInput.style.height = "auto";
+
+    messageInput.style.height =
+    messageInput.scrollHeight + "px";
+
+});
 
 
 
