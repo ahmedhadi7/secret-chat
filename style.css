@@ -244,3 +244,48 @@ button:hover{
     width:100px;
 
 }
+textarea{
+
+    flex:1;
+
+    resize:none;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:12px;
+
+    outline:none;
+
+    font-size:16px;
+
+    max-height:150px;
+
+    overflow-y:auto;
+
+    font-family:Tahoma, Arial;
+
+}
+
+
+
+.send-icon{
+
+    width:50px;
+
+    height:50px;
+
+    border-radius:50%;
+
+    font-size:24px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:0;
+
+}
