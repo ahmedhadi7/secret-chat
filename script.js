@@ -59,28 +59,36 @@ document.getElementById("loginBtn");
 const errorMessage =
 document.getElementById("errorMessage");
 
+
 const messagesBox =
 document.getElementById("messages");
 
+
 const messageInput =
 document.getElementById("messageInput");
+
 
 const sendBtn =
 document.getElementById("sendBtn");
 
 
-// هنا فقط ضع كود تكبير الحقل
 
-messageInput.addEventListener(
-"input",
-()=>{
+// تكبير حقل الكتابة
 
-    messageInput.style.height = "auto";
+if(messageInput){
 
-    messageInput.style.height =
-    messageInput.scrollHeight + "px";
+    messageInput.addEventListener(
+    "input",
+    ()=>{
 
-});
+        messageInput.style.height = "auto";
+
+        messageInput.style.height =
+        messageInput.scrollHeight + "px";
+
+    });
+
+}
 
 
 
