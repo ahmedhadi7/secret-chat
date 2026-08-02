@@ -44,50 +44,32 @@ if(!roomId){
 const loginBox =
 document.getElementById("loginBox");
 
-
 const chatBox =
 document.getElementById("chatBox");
-
 
 const usernameInput =
 document.getElementById("username");
 
-
 const passwordInput =
 document.getElementById("password");
-
 
 const loginBtn =
 document.getElementById("loginBtn");
 
-
 const errorMessage =
 document.getElementById("errorMessage");
-
-const savedUser =
-localStorage.getItem("secret_username");
-
-if(savedUser){
-
-    usernameInput.value = savedUser;
-
-}
-
 
 const messagesBox =
 document.getElementById("messages");
 
-
 const messageInput =
 document.getElementById("messageInput");
-
 
 const sendBtn =
 document.getElementById("sendBtn");
 
 
-
-// تكبير حقل الرسالة تلقائياً
+// هنا فقط ضع كود تكبير الحقل
 
 messageInput.addEventListener(
 "input",
