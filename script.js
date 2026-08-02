@@ -1,81 +1,109 @@
 import {
-    collection,
+
     db,
+    collection,
+    addDoc,
     doc,
     getDoc,
+    updateDoc,
     onSnapshot,
     orderBy,
     query,
-    addDoc,
     serverTimestamp
+
 } from "./firebase.js";
+
 
 
 console.log("script loaded");
 
 
+
 // قراءة الغرفة من الرابط
 
-const urlParams = new URLSearchParams(window.location.search);
+const urlParams =
+new URLSearchParams(window.location.search);
 
-const roomId = urlParams.get("room");
+
+const roomId =
+urlParams.get("room");
+
 
 
 if(!roomId){
 
     alert("رابط المحادثة غير صحيح");
 
-    throw new Error("Room ID is missing");
+    throw new Error("Room missing");
 
 }
 
 
 
+
 // العناصر
 
-const loginBox = document.getElementById("loginBox");
-
-const chatBox = document.getElementById("chatBox");
-
-
-const usernameInput = document.getElementById("username");
-
-const passwordInput = document.getElementById("password");
+const loginBox =
+document.getElementById("loginBox");
 
 
-const loginBtn = document.getElementById("loginBtn");
+const chatBox =
+document.getElementById("chatBox");
 
 
-const messageInput = document.getElementById("messageInput");
-
-const sendBtn = document.getElementById("sendBtn");
-
-
-const messagesBox = document.getElementById("messages");
-
-const errorMessage = document.getElementById("errorMessage");
+const usernameInput =
+document.getElementById("username");
 
 
+const passwordInput =
+document.getElementById("password");
 
-// المستخدم
+
+const loginBtn =
+document.getElementById("loginBtn");
+
+
+const errorMessage =
+document.getElementById("errorMessage");
+
+
+const messagesBox =
+document.getElementById("messages");
+
+
+const messageInput =
+document.getElementById("messageInput");
+
+
+const sendBtn =
+document.getElementById("sendBtn");
+
+
+
+
 
 let username = "";
 
 
 
 
+
 // تسجيل الدخول
 
-loginBtn.onclick = async () => {
+
+loginBtn.onclick = async()=>{
 
 
-    const name = usernameInput.value.trim();
-
-    const password = passwordInput.value.trim();
-
+    const name =
+    usernameInput.value.trim();
 
 
-    if(name === ""){
+    const password =
+    passwordInput.value.trim();
+
+
+
+    if(name===""){
 
         errorMessage.innerHTML =
         "اكتب اسمك";
@@ -86,41 +114,28 @@ loginBtn.onclick = async () => {
 
 
 
-    try {
+    try{
 
 
-        const roomRef = doc(
+        const roomRef =
+        doc(
             db,
             "rooms",
             roomId
         );
 
 
-        const roomSnap = await getDoc(roomRef);
+
+        const roomSnap =
+        await getDoc(roomRef);
 
 
 
         if(!roomSnap.exists()){
 
-            errorMessage.innerHTML =
-            "❌ المحادثة غير موجودة";
-
-            return;
-
-        }
-
-
-
-        const correctPassword =
-        roomSnap.data().password;
-
-
-
-        if(password !== correctPassword){
-
 
             errorMessage.innerHTML =
-            "❌ رمز الدخول غير صحيح";
+            "الغرفة غير موجودة";
 
 
             return;
@@ -129,14 +144,23 @@ loginBtn.onclick = async () => {
 
 
 
-        username = name;
+
+        if(password !== roomSnap.data().password){
+
+
+            errorMessage.innerHTML =
+            "❌ كلمة المرور خطأ";
+
+
+            return;
+
+        }
 
 
 
-        localStorage.setItem(
-            "secret_username",
-            username
-        );
+
+
+        username=name;
 
 
 
@@ -150,17 +174,17 @@ loginBtn.onclick = async () => {
 
 
 
-    } catch(error){
+    }
 
+    catch(error){
 
-        console.error(error);
-
+        console.log(error);
 
         errorMessage.innerHTML =
-        "حدث خطأ في الاتصال";
-
+        "خطأ في الاتصال";
 
     }
+
 
 
 };
@@ -170,26 +194,139 @@ loginBtn.onclick = async () => {
 
 
 
+
 // تحميل الرسائل
+
 
 function loadMessages(){
 
 
 
-    const messagesQuery = query(
-
-        collection(
-            db,
-            "rooms",
-            roomId,
-            "messages"
-        ),
+const messagesQuery = query(
 
 
-        orderBy(
-            "time",
-            "asc"
-        )
+    collection(
+
+        db,
+
+        "rooms",
+
+        roomId,
+
+        "messages"
+
+    ),
+
+
+
+    orderBy(
+
+        "time",
+
+        "asc"
+
+    )
+
+
+);
+
+
+
+
+
+onSnapshot(
+
+messagesQuery,
+
+
+async(snapshot)=>{
+
+
+messagesBox.innerHTML="";
+
+
+
+for(const messageDoc of snapshot.docs){
+
+
+
+    const data =
+    messageDoc.data();
+
+
+
+    // تحويل الرسالة إلى مقروءة
+
+    if(
+
+        data.sender !== username
+
+        &&
+
+        data.read === false
+
+    ){
+
+
+        await updateDoc(
+
+
+            doc(
+
+                db,
+
+                "rooms",
+
+                roomId,
+
+                "messages",
+
+                messageDoc.id
+
+            ),
+
+
+            {
+
+
+                read:true,
+
+
+                readTime:
+                serverTimestamp()
+
+
+            }
+
+
+        );
+
+
+    }
+
+
+
+
+
+    const div =
+    document.createElement("div");
+
+
+
+    div.className =
+    "message " +
+
+    (
+
+        data.sender === username
+
+        ?
+
+        "my-message"
+
+        :
+
+        "other-message"
 
     );
 
@@ -197,84 +334,104 @@ function loadMessages(){
 
 
 
-    onSnapshot(
 
-        messagesQuery,
-
-
-        (snapshot)=>{
-
-
-            messagesBox.innerHTML = "";
+    let status="";
 
 
 
-            snapshot.forEach((doc)=>{
+    if(data.sender === username){
 
 
-                const data = doc.data();
+        if(data.read){
 
 
-
-                const div =
-                document.createElement("div");
-
+            status =
+            "✓✓ تمت القراءة";
 
 
-                div.className =
-                "message " +
-
-                (
-                    data.sender === username
-
-                    ?
-
-                    "my-message"
-
-                    :
-
-                    "other-message"
-
-                );
+            if(data.readTime){
 
 
-
-                div.innerHTML = `
-
-                    <div class="message-name">
-
-                    ${data.sender}
-
-                    </div>
+                const time =
+                data.readTime
+                .toDate()
+                .toLocaleTimeString("ar-IQ");
 
 
-                    <div>
-
-                    ${data.text}
-
-                    </div>
-
-                `;
+                status +=
+                " - " + time;
 
 
-
-                messagesBox.appendChild(div);
-
-
-
-            });
-
-
-
-            messagesBox.scrollTop =
-            messagesBox.scrollHeight;
+            }
 
 
 
         }
 
-    );
+        else{
 
+
+            status =
+            "✓ تم الإرسال";
+
+
+        }
+
+
+    }
+
+
+
+
+
+    div.innerHTML = `
+
+
+    <div class="message-name">
+
+    ${data.sender}
+
+    </div>
+
+
+
+    <div class="message-text">
+
+    ${data.text}
+
+    </div>
+
+
+
+    <div class="message-info">
+
+    ${status}
+
+    </div>
+
+
+    `;
+
+
+
+    messagesBox.appendChild(div);
+
+
+
+}
+
+
+
+messagesBox.scrollTop =
+messagesBox.scrollHeight;
+
+
+
+}
+
+
+
+);
 
 
 }
@@ -285,10 +442,11 @@ function loadMessages(){
 
 
 
+
 // إرسال رسالة
 
-sendBtn.onclick = async () => {
 
+sendBtn.onclick = async()=>{
 
 
     const text =
@@ -296,7 +454,7 @@ sendBtn.onclick = async () => {
 
 
 
-    if(text === ""){
+    if(text===""){
 
         return;
 
@@ -304,14 +462,7 @@ sendBtn.onclick = async () => {
 
 
 
-    try {
-
-        console.log("sending:", {
-    roomId,
-    username,
-    text
-});
-
+    try{
 
 
         await addDoc(
@@ -334,37 +485,40 @@ sendBtn.onclick = async () => {
             {
 
 
-                sender: username,
+                sender:username,
 
 
-                text: text,
+                text:text,
 
 
-                time: serverTimestamp()
+                time:
+                serverTimestamp(),
+
+
+                read:false,
+
+
+                readTime:null
 
 
             }
-
 
 
         );
 
 
 
-        messageInput.value = "";
+        messageInput.value="";
 
 
-
-        console.log("Message sent");
-
+    }
 
 
-    } catch(error){
+    catch(error){
 
 
-
-        console.error(
-            "Send error:",
+        console.log(
+            "Send error",
             error
         );
 

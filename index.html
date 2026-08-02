@@ -2,89 +2,79 @@
 <html lang="ar" dir="rtl">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Secret Chat</title>
+<meta charset="UTF-8">
 
-    <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Secret Chat</title>
+
+<link rel="stylesheet" href="style.css">
+
 </head>
+
 
 <body>
 
-    <!-- صفحة الدخول -->
-    <div class="login-box" id="loginBox">
 
-        <h1>🔒 Secret Chat</h1>
+<div class="container">
 
-        <p>محادثة خاصة</p>
+
+    <!-- تسجيل الدخول -->
+
+    <div id="loginBox" class="box">
+
+
+        <h2>🔒 قصائد الملا باسم الكربلائي 2006</h2>
+
 
         <input 
-            type="text" 
-            id="username"
-            placeholder="اكتب اسمك">
+        id="username"
+        type="text"
+        placeholder="اكتب اسمك">
+
 
         <input 
-            type="password" 
-            id="password"
-            placeholder="كلمة المرور">
+        id="password"
+        type="password"
+        placeholder="كلمة المرور">
 
 
         <button id="loginBtn">
             دخول
         </button>
 
+
         <p id="errorMessage"></p>
+
 
     </div>
 
 
 
-    <!-- صفحة المحادثة -->
-    <div class="chat-box hidden" id="chatBox">
 
 
-        <div class="chat-header">
-
-            <h2>
-                💬 Secret Chat
-            </h2>
-
-        </div>
+    <!-- المحادثة -->
 
 
+    <div id="chatBox" class="box hidden">
 
-        <div id="messages" class="messages">
 
-            <!-- الرسائل تظهر هنا -->
-
-        </div>
+        <div id="messages"></div>
 
 
 
-        <div class="send-area">
+        <div class="send-box">
 
 
-            <input 
-                type="text"
-                id="messageInput"
-                placeholder="اكتب رسالة...">
-
-
-            <input 
-                type="file"
-                id="imageInput"
-                accept="image/*"
-                hidden>
-
-
-            <button id="imageBtn">
-                📷
-            </button>
+            <input
+            id="messageInput"
+            type="text"
+            placeholder="اكتب رسالة...">
 
 
             <button id="sendBtn">
-                ➤
+                إرسال
             </button>
 
 
@@ -95,7 +85,10 @@
 
 
 
-<script type="module" src="firebase.js"></script>
+</div>
+
+
+
 <script type="module" src="script.js"></script>
 
 
