@@ -73,6 +73,14 @@ messageInput.addEventListener(
     messageInput.scrollHeight + "px";
 
 });
+const savedUser =
+localStorage.getItem("secret_username");
+
+if(savedUser){
+
+    usernameInput.value = savedUser;
+
+}
 
 
 const messagesBox =
@@ -169,6 +177,10 @@ loginBtn.onclick = async()=>{
 
 
         username=name;
+        localStorage.setItem(
+    "secret_username",
+    username
+);
 
 
 
